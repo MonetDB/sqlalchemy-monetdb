@@ -35,7 +35,7 @@ setup_params = dict(
             ["monetdb = sqlalchemy_monetdb.dialect:MonetDialect"]
     },
     license="MIT",
-    install_requires=['pymonetdb <= 0.1', 'sqlalchemy'],
+    install_requires=['pymonetdb >= 0.1', 'sqlalchemy'],
 )
 
 if __name__ == '__main__':
