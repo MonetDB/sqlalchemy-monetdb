@@ -1,3 +1,4 @@
+from distutils.command.config import config
 import sqlalchemy as sa
 from sqlalchemy.testing.assertions import AssertsCompiledSQL, AssertsExecutionResults
 from sqlalchemy.testing.suite import *
@@ -19,6 +20,15 @@ major, minor = [int(i) for i in sa.__version__.split('.')[:2]]
 
 
 class ComponentReflectionTest(_ComponentReflectionTest):
+    def __init__(self) -> None:
+        with config.db.connection as conn:
+            conn.execute("DROP SCHEMA test_schema2 CASCADE")
+            conn.execute("DROP SCHEMA test_schema CASCADE")
+            conn.execute("CREATE SCHEMA test_schema2")
+            conn.execute("CREATE SCHEMA test_schema")
+        super().__init__()
+
+
     @testing.requires.foreign_key_constraint_reflection
     def test_get_foreign_keys(self):
         """we use test_schema2 schema"""
@@ -92,7 +102,7 @@ class ComponentReflectionTest(_ComponentReflectionTest):
                           Column('test2', sa.Float(5), nullable=False),
                           Column('parent_user_id', sa.Integer,
                                  sa.ForeignKey('%susers.user_id' %
-                                               schema_prefix,
+                                               "test_schema.",
                                                name='user_id_fk')),
                           schema=schema,
                           test_needs_fk=True,
