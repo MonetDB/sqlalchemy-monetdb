@@ -46,6 +46,7 @@ setup_params = dict(
     zip_safe=False,
     entry_points={
         "sqlalchemy.dialects": [
+            "monetdb = sqlalchemy_monetdb.dialect:MonetDialect",
             "monetdb.pymonetdb = sqlalchemy_monetdb.dialect:MonetDialect",
         ]
     },

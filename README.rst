@@ -23,8 +23,11 @@ Usage
 To start using this dialect::
 
     from sqlalchemy import create_engine
-    engine = create_engine('monetdb:///demo:', echo=True)
+    engine = create_engine('monetdb://monetdb:monetdb@localhost:50000/demo', echo=True)
 
+Alternatively, you can also specify the driver::
+
+    engine = create_engine('monetdb+pymonetdb://monetdb:monetdb@localhost:50000/demo', echo=True)
 
 More info
 ---------
