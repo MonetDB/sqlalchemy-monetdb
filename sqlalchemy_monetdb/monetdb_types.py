@@ -16,7 +16,7 @@ class WRD(sqltypes.Integer):
 
 
 class DOUBLE_PRECISION(sqltypes.Float):
-    __visit_name__ = 'DOUBLE PRECISION'
+    __visit_name__ = 'DOUBLE_PRECISION'
 
 
 class TINYINT(sqltypes.Integer):
