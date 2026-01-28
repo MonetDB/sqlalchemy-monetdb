@@ -4,13 +4,13 @@ on: [push]
 
 jobs:
   linux-test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       DATABASE: test
     continue-on-error: true
     services:
       monetdb:
-        image: "monetdb/dev-builds:Aug2024"
+        image: "monetdb/dev-builds:Dec2025"
         env:
           MDB_CREATE_DBS: '${{ env.DATABASE }}'
           MDB_DB_ADMIN_PASS: monetdb
@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         branch: [default]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
