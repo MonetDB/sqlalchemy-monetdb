@@ -21,24 +21,30 @@ jobs:
         branch: [default]
         python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Debian packages
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y software-properties-common curl make
-          curl https://www.monetdb.org/downloads/MonetDB-GPG-KEY | sudo apt-key add -
-          sudo add-apt-repository 'deb http://dev.monetdb.org/downloads/deb/ noble monetdb'
-          sudo apt-get update -qq
-          sudo apt-get install -y monetdb-client
-      - name: Initialize MonetDB database
-        run: |
-          sudo -u monetdb mclient -d "monetdb://localhost:50000/${{ env.DATABASE }}?user=monetdb&password=monetdb" -s "create schema test_schema;"
-          sudo -u monetdb mclient -d "monetdb://localhost:50000/${{ env.DATABASE }}?user=monetdb&password=monetdb" -s "create schema test_schema2;"
-          sudo -u monetdb mclient -d "monetdb://localhost:50000/${{ env.DATABASE }}?user=monetdb&password=monetdb" -s "alter user monetdb set schema test_schema2;"
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
+
+      - name: Install pymonetdb
+        run: pip install pymonetdb
+
+      - name: Prepare database
+        shell: python
+        run: |
+          import logging, os, pymonetdb
+          logging.basicConfig(level=logging.DEBUG)
+          dbname = os.environ['DATABASE']
+          conn = pymonetdb.connect(database=dbname)
+          cursor = conn.cursor()
+          cursor.execute("CREATE SCHEMA test_schema")
+          cursor.execute("CREATE SCHEMA test_schema2")
+          cursor.execute("ALTER USER monetdb SET SCHEMA test_schema2")
+          conn.commit()
+
       - name: Run tests
         run: make pytest
