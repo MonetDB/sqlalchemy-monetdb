@@ -14,11 +14,9 @@ from . import modern_sqlalchemy
 # from sqlalchemy import types as sqltypes
 
 from sqlalchemy import pool, exc
-if not modern_sqlalchemy:
-    from sqlalchemy.engine import default, reflection
-else:
-    from sqlalchemy.engine import default, reflection, ObjectScope, ObjectKind
-    from sqlalchemy.engine.interfaces import ReflectedCheckConstraint
+from sqlalchemy.engine import default, reflection
+if modern_sqlalchemy:
+    from sqlalchemy.engine import ObjectScope, ObjectKind
 from sqlalchemy.sql import sqltypes
 
 from sqlalchemy_monetdb.base import MonetExecutionContext, MonetIdentifierPreparer

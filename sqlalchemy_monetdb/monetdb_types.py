@@ -10,39 +10,23 @@ from . import modern_sqlalchemy
 
 from sqlalchemy.sql import sqltypes as sqltypes
 from sqlalchemy.sql.sqltypes import TypeEngine
-if not modern_sqlalchemy:
-    from sqlalchemy.types import (
-        INTEGER,
-        BIGINT,
-        SMALLINT,
-        VARCHAR,
-        CHAR,
-        TEXT,
-        FLOAT,
-        DATE,
-        BOOLEAN,
-        DECIMAL,
-        TIMESTAMP,
-        BLOB,
-        JSON,
-    )
-else:
-    from sqlalchemy.types import (
-        INTEGER,
-        BIGINT,
-        SMALLINT,
-        VARCHAR,
-        CHAR,
-        TEXT,
-        FLOAT,
-        DATE,
-        BOOLEAN,
-        DECIMAL,
-        TIMESTAMP,
-        BLOB,
-        JSON,
-        UUID,
-    )
+from sqlalchemy.types import (
+    INTEGER,
+    BIGINT,
+    SMALLINT,
+    VARCHAR,
+    CHAR,
+    TEXT,
+    FLOAT,
+    DATE,
+    BOOLEAN,
+    DECIMAL,
+    TIMESTAMP,
+    BLOB,
+    JSON,
+)
+if modern_sqlalchemy:
+    from sqlalchemy.types import UUID
 from uuid import UUID as _python_UUID
 
 
