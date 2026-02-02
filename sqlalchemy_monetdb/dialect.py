@@ -4,14 +4,17 @@ import typing
 from typing import Optional, List, Any
 from collections import defaultdict
 
+import sqlalchemy
 from sqlalchemy import text
+
+from . import modern_sqlalchemy
+
 
 # from sqlalchemy import sql, util
 # from sqlalchemy import types as sqltypes
 
 from sqlalchemy import pool, exc
-old = exc._version_token == '14'
-if old:
+if not modern_sqlalchemy:
     from sqlalchemy.engine import default, reflection
 else:
     from sqlalchemy.engine import default, reflection, ObjectScope, ObjectKind
@@ -117,7 +120,7 @@ class MonetDialect(default.DefaultDialect):
         rs = con.execute(text(s))
         return [row[0] for row in rs]
 
-    if old:
+    if not modern_sqlalchemy:
         @reflection.cache
         def has_index(
             self,
@@ -380,7 +383,7 @@ class MonetDialect(default.DefaultDialect):
         )
         return self._value_or_raise(data, table_name, schema)
 
-    if not old:
+    if modern_sqlalchemy:
         def get_multi_columns(self, connection, schema, filter_names, scope, kind, **kw):
             if scope is ObjectScope.ANY:
                 default_data = self.get_multi_columns(
@@ -583,7 +586,7 @@ ORDER BY fk_t, fk, o
         )
         return self._value_or_raise(data, table_name, schema)
 
-    if not old:
+    if modern_sqlalchemy:
         def get_multi_foreign_keys(
             self, connection, schema, filter_names, scope, kind, **kw
         ):
@@ -740,7 +743,7 @@ ORDER BY fk_t, fk, o
         )
         return self._value_or_raise(data, table_name, schema)
 
-    if not old:
+    if modern_sqlalchemy:
         def get_multi_indexes(self, connection, schema, filter_names, scope, kind, **kw):
             if scope is ObjectScope.ANY:
                 default_data = self.get_multi_indexes(

@@ -4,11 +4,13 @@ from typing import TYPE_CHECKING
 from typing import overload
 import datetime as dt
 
-from sqlalchemy import exc
-old = exc._version_token == '14'
+import sqlalchemy
+
+from . import modern_sqlalchemy
+
 from sqlalchemy.sql import sqltypes as sqltypes
 from sqlalchemy.sql.sqltypes import TypeEngine
-if old:
+if not modern_sqlalchemy:
     from sqlalchemy.types import (
         INTEGER,
         BIGINT,
@@ -121,7 +123,7 @@ class JSONPATH(JSONPathType):
     __visit_name__ = "JSONPATH"
 
 
-if not old:
+if modern_sqlalchemy:
     class MDB_UUID(sqltypes.UUID[sqltypes._UUID_RETURN]):
         render_bind_cast = True
         render_literal_cast = True
@@ -162,6 +164,6 @@ MONETDB_TYPE_MAP = {
     "timestamp": TIMESTAMP,
     "timestamptz": TIMESTAMP,
     "varchar": VARCHAR,
-    "uuid": None if old else MDB_UUID,
+    "uuid": MDB_UUID if modern_sqlalchemy else None,
     "json": MDB_JSON,
 }

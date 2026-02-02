@@ -2,10 +2,9 @@
 from sqlalchemy import types as sqltypes, schema, util
 from sqlalchemy.sql import compiler, operators, cast
 
-from sqlalchemy import exc
-old = exc._version_token == '14'
-
 import re
+
+from . import modern_sqlalchemy
 
 FK_ON_DELETE = re.compile(
     r"^(?:RESTRICT|CASCADE|SET NULL|NO ACTION|SET DEFAULT)$", re.I
@@ -179,7 +178,7 @@ class MonetCompiler(compiler.SQLCompiler):
         }
     )
 
-    if old:
+    if not modern_sqlalchemy:
         reg = re.escape("".join(bindname_escape_characters))
         _bind_translate_re = re.compile(f"[{reg}]")
         _bind_translate_chars = bindname_escape_characters
