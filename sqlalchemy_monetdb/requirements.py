@@ -29,7 +29,7 @@ class Requirements(SuiteRequirements):
     def index_ddl_if_exists(self):
         """target platform supports IF NOT EXISTS / IF EXISTS for indexes."""
 
-        return exclusions.closed()
+        return exclusions.open()
 
     @property
     def foreign_keys(self):

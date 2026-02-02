@@ -86,6 +86,10 @@ class MonetDDLCompiler(compiler.DDLCompiler):
         else:
             text = "CREATE "
             text += "INDEX "
+
+            if create.if_not_exists:
+                text += "IF NOT EXISTS "
+
             text += "%s ON %s " % (
                 self._prepared_index_name(index, include_schema=False),
                 preparer.format_table(index.table),
