@@ -10,8 +10,12 @@ from sqlalchemy import text
 # from sqlalchemy import types as sqltypes
 
 from sqlalchemy import pool, exc
-from sqlalchemy.engine import default, reflection, ObjectScope, ObjectKind
-from sqlalchemy.engine.interfaces import ReflectedCheckConstraint
+old = exc._version_token == '14'
+if old:
+    from sqlalchemy.engine import default, reflection
+else:
+    from sqlalchemy.engine import default, reflection, ObjectScope, ObjectKind
+    from sqlalchemy.engine.interfaces import ReflectedCheckConstraint
 from sqlalchemy.sql import sqltypes
 
 from sqlalchemy_monetdb.base import MonetExecutionContext, MonetIdentifierPreparer
@@ -113,22 +117,39 @@ class MonetDialect(default.DefaultDialect):
         rs = con.execute(text(s))
         return [row[0] for row in rs]
 
-    @reflection.cache
-    def has_index(
-        self,
-        connection: "Connection",
-        table_name: str,
-        index_name: str,
-        schema: Optional[str] = None,
-        **kw,
-    ) -> bool:
-        if self.has_table(connection, table_name, schema=schema):
-            data = self.get_indexes(connection, table_name, schema=schema)
-            if data:
-                for i in data:
-                    if i["name"] == index_name:
-                        return True
-        return False
+    if old:
+        @reflection.cache
+        def has_index(
+            self,
+            connection: "Connection",
+            table_name: str,
+            index_name: str,
+            schema=None
+        ):
+            if self.has_table(connection, table_name, schema=schema):
+                data = self.get_indexes(connection, table_name, schema=schema)
+                if data:
+                    for i in data:
+                        if i["name"] == index_name:
+                            return True
+            return False
+    else:
+        @reflection.cache
+        def has_index(
+            self,
+            connection: "Connection",
+            table_name: str,
+            index_name: str,
+            schema: Optional[str] = None,
+            **kw,
+        ) -> bool:
+            if self.has_table(connection, table_name, schema=schema):
+                data = self.get_indexes(connection, table_name, schema=schema)
+                if data:
+                    for i in data:
+                        if i["name"] == index_name:
+                            return True
+            return False
 
     @reflection.cache
     def has_table(self, connection: "Connection", table_name, schema=None, **kw):
@@ -359,42 +380,43 @@ class MonetDialect(default.DefaultDialect):
         )
         return self._value_or_raise(data, table_name, schema)
 
-    def get_multi_columns(self, connection, schema, filter_names, scope, kind, **kw):
-        if scope is ObjectScope.ANY:
-            default_data = self.get_multi_columns(
-                connection, schema, filter_names, ObjectScope.DEFAULT, kind, **kw
-            )
-            temp_data = self.get_multi_columns(
-                connection, schema, filter_names, ObjectScope.TEMPORARY, kind, **kw
-            )
-            data = dict(default_data)
-            data.update(temp_data)
-            return data
-        temp = 0
-        if scope is ObjectScope.DEFAULT:
+    if not old:
+        def get_multi_columns(self, connection, schema, filter_names, scope, kind, **kw):
+            if scope is ObjectScope.ANY:
+                default_data = self.get_multi_columns(
+                    connection, schema, filter_names, ObjectScope.DEFAULT, kind, **kw
+                )
+                temp_data = self.get_multi_columns(
+                    connection, schema, filter_names, ObjectScope.TEMPORARY, kind, **kw
+                )
+                data = dict(default_data)
+                data.update(temp_data)
+                return data
             temp = 0
-        elif scope is ObjectScope.TEMPORARY:
-            temp = 1
-        tabletypes = []
-        if not filter_names:
-            filter_names = []
-            if temp == 1 and not schema:
-                tabletypes.append(30)
-                if ObjectKind.TABLE in kind:
-                    filter_names += self.get_temp_table_names(connection)
-            else:
-                if ObjectKind.TABLE in kind:
-                    filter_names += self.get_table_names(connection, schema)
-                if ObjectKind.VIEW in kind:
-                    filter_names += self.get_view_names(connection, schema)
+            if scope is ObjectScope.DEFAULT:
+                temp = 0
+            elif scope is ObjectScope.TEMPORARY:
+                temp = 1
+            tabletypes = []
+            if not filter_names:
+                filter_names = []
+                if temp == 1 and not schema:
+                    tabletypes.append(30)
+                    if ObjectKind.TABLE in kind:
+                        filter_names += self.get_temp_table_names(connection)
+                else:
+                    if ObjectKind.TABLE in kind:
+                        filter_names += self.get_table_names(connection, schema)
+                    if ObjectKind.VIEW in kind:
+                        filter_names += self.get_view_names(connection, schema)
 
-        if temp == 0 and ObjectKind.TABLE in kind:
-            tabletypes.append(0)
-        if temp == 0 and ObjectKind.VIEW in kind:
-            tabletypes.append(1)
-        return self._get_columns(
-            connection, filter_names, schema, temp=temp, tabletypes=tabletypes, **kw
-        )
+            if temp == 0 and ObjectKind.TABLE in kind:
+                tabletypes.append(0)
+            if temp == 0 and ObjectKind.VIEW in kind:
+                tabletypes.append(1)
+            return self._get_columns(
+                connection, filter_names, schema, temp=temp, tabletypes=tabletypes, **kw
+            )
 
     def _get_server_version_info(self, connection):
         version = connection.execute(text("SELECT value FROM environment WHERE name = 'monet_version'")).scalar()
@@ -561,49 +583,50 @@ ORDER BY fk_t, fk, o
         )
         return self._value_or_raise(data, table_name, schema)
 
-    def get_multi_foreign_keys(
-        self, connection, schema, filter_names, scope, kind, **kw
-    ):
-        if scope is ObjectScope.ANY:
-            default_data = self.get_multi_foreign_keys(
-                connection, schema, filter_names, ObjectScope.DEFAULT, kind, **kw
-            )
-            temp_data = self.get_multi_foreign_keys(
-                connection, schema, filter_names, ObjectScope.TEMPORARY, kind, **kw
-            )
-            data = dict(default_data)
-            data.update(temp_data)
-            return data
-        temp = 0
-        if scope is ObjectScope.DEFAULT:
+    if not old:
+        def get_multi_foreign_keys(
+            self, connection, schema, filter_names, scope, kind, **kw
+        ):
+            if scope is ObjectScope.ANY:
+                default_data = self.get_multi_foreign_keys(
+                    connection, schema, filter_names, ObjectScope.DEFAULT, kind, **kw
+                )
+                temp_data = self.get_multi_foreign_keys(
+                    connection, schema, filter_names, ObjectScope.TEMPORARY, kind, **kw
+                )
+                data = dict(default_data)
+                data.update(temp_data)
+                return data
             temp = 0
-        elif scope is ObjectScope.TEMPORARY:
-            temp = 1
-        tabletypes = []
-        if not filter_names:
-            filter_names = []
-            if temp == 1 and not schema:
-                tabletypes.append(30)
-                if ObjectKind.TABLE in kind:
-                    filter_names += self.get_temp_table_names(connection)
-            else:
-                if ObjectKind.TABLE in kind:
-                    filter_names += self.get_table_names(connection, schema)
-                if ObjectKind.VIEW in kind:
-                    filter_names += self.get_view_names(connection, schema)
+            if scope is ObjectScope.DEFAULT:
+                temp = 0
+            elif scope is ObjectScope.TEMPORARY:
+                temp = 1
+            tabletypes = []
+            if not filter_names:
+                filter_names = []
+                if temp == 1 and not schema:
+                    tabletypes.append(30)
+                    if ObjectKind.TABLE in kind:
+                        filter_names += self.get_temp_table_names(connection)
+                else:
+                    if ObjectKind.TABLE in kind:
+                        filter_names += self.get_table_names(connection, schema)
+                    if ObjectKind.VIEW in kind:
+                        filter_names += self.get_view_names(connection, schema)
 
-        if temp == 0 and ObjectKind.TABLE in kind:
-            tabletypes.append(0)
-        if temp == 0 and ObjectKind.VIEW in kind:
-            tabletypes.append(1)
-        return self._get_foreign_keys(
-            connection,
-            schema=schema,
-            filter_names=filter_names,
-            temp=temp,
-            tabletypes=tabletypes,
-            **kw,
-        )
+            if temp == 0 and ObjectKind.TABLE in kind:
+                tabletypes.append(0)
+            if temp == 0 and ObjectKind.VIEW in kind:
+                tabletypes.append(1)
+            return self._get_foreign_keys(
+                connection,
+                schema=schema,
+                filter_names=filter_names,
+                temp=temp,
+                tabletypes=tabletypes,
+                **kw,
+            )
 
     def _get_indexes(
         self,
@@ -717,42 +740,43 @@ ORDER BY fk_t, fk, o
         )
         return self._value_or_raise(data, table_name, schema)
 
-    def get_multi_indexes(self, connection, schema, filter_names, scope, kind, **kw):
-        if scope is ObjectScope.ANY:
-            default_data = self.get_multi_indexes(
-                connection, schema, filter_names, ObjectScope.DEFAULT, kind, **kw
-            )
-            temp_data = self.get_multi_indexes(
-                connection, schema, filter_names, ObjectScope.TEMPORARY, kind, **kw
-            )
-            data = dict(default_data)
-            data.update(temp_data)
-            return data
-        temp = 0
-        if scope is ObjectScope.DEFAULT:
+    if not old:
+        def get_multi_indexes(self, connection, schema, filter_names, scope, kind, **kw):
+            if scope is ObjectScope.ANY:
+                default_data = self.get_multi_indexes(
+                    connection, schema, filter_names, ObjectScope.DEFAULT, kind, **kw
+                )
+                temp_data = self.get_multi_indexes(
+                    connection, schema, filter_names, ObjectScope.TEMPORARY, kind, **kw
+                )
+                data = dict(default_data)
+                data.update(temp_data)
+                return data
             temp = 0
-        elif scope is ObjectScope.TEMPORARY:
-            temp = 1
-        tabletypes = []
-        if not filter_names:
-            filter_names = []
-            if temp == 1 and not schema:
-                tabletypes.append(30)
-                if ObjectKind.TABLE in kind:
-                    filter_names += self.get_temp_table_names(connection)
-            else:
-                if ObjectKind.TABLE in kind:
-                    filter_names += self.get_table_names(connection, schema)
-                if ObjectKind.VIEW in kind:
-                    filter_names += self.get_view_names(connection, schema)
+            if scope is ObjectScope.DEFAULT:
+                temp = 0
+            elif scope is ObjectScope.TEMPORARY:
+                temp = 1
+            tabletypes = []
+            if not filter_names:
+                filter_names = []
+                if temp == 1 and not schema:
+                    tabletypes.append(30)
+                    if ObjectKind.TABLE in kind:
+                        filter_names += self.get_temp_table_names(connection)
+                else:
+                    if ObjectKind.TABLE in kind:
+                        filter_names += self.get_table_names(connection, schema)
+                    if ObjectKind.VIEW in kind:
+                        filter_names += self.get_view_names(connection, schema)
 
-        if temp == 0 and ObjectKind.TABLE in kind:
-            tabletypes.append(0)
-        if temp == 0 and ObjectKind.VIEW in kind:
-            tabletypes.append(1)
-        return self._get_indexes(
-            connection, filter_names, schema, temp=temp, tabletypes=tabletypes, **kw
-        )
+            if temp == 0 and ObjectKind.TABLE in kind:
+                tabletypes.append(0)
+            if temp == 0 and ObjectKind.VIEW in kind:
+                tabletypes.append(1)
+            return self._get_indexes(
+                connection, filter_names, schema, temp=temp, tabletypes=tabletypes, **kw
+            )
 
     def do_commit(self, connection):
         if not connection.autocommit:

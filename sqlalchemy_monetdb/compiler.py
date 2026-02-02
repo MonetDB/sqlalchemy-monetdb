@@ -2,6 +2,9 @@
 from sqlalchemy import types as sqltypes, schema, util
 from sqlalchemy.sql import compiler, operators, cast
 
+from sqlalchemy import exc
+old = exc._version_token == '14'
+
 import re
 
 FK_ON_DELETE = re.compile(
@@ -175,6 +178,11 @@ class MonetCompiler(compiler.SQLCompiler):
             "?": "C",
         }
     )
+
+    if old:
+        reg = re.escape("".join(bindname_escape_characters))
+        _bind_translate_re = re.compile(f"[{reg}]")
+        _bind_translate_chars = bindname_escape_characters
 
     def bindparam_string(self, name, **kw):
         if self.preparer._bindparam_requires_quotes(name) and not kw.get(
