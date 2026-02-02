@@ -47,7 +47,7 @@ class Requirements(SuiteRequirements):
         SQLAlchemy generates this with the :func:`_sql.values` function.
 
         """
-        return exclusions.closed()
+        return exclusions.open()
 
     @property
     def standard_cursor_sql(self):
@@ -151,11 +151,6 @@ class Requirements(SuiteRequirements):
         """target database can render LIMIT and/or OFFSET using a bound
         parameter
         """
-        # NOTE: Gijs comment is "open by default, but closed since
-        # raises: sqlalchemy.exc.CompileError: This SELECT structure
-        # does not use a simple integer value for offset"
-        # TODO: recheck if the tests are failing
-
         return exclusions.open()
 
     @property
@@ -178,7 +173,7 @@ class Requirements(SuiteRequirements):
 
         """
         # NOTE: https://www.monetdb.org/bugzilla/show_bug.cgi?id=6434
-        return exclusions.closed()
+        return exclusions.open()
 
     @property
     def parens_in_union_contained_select_wo_limit_offset(self):
@@ -192,7 +187,7 @@ class Requirements(SuiteRequirements):
         creates an additional subquery.
 
         """
-        return exclusions.closed()
+        return exclusions.open()
 
     @property
     def boolean_col_expressions(self):
@@ -211,7 +206,7 @@ class Requirements(SuiteRequirements):
         """Target backends that support nulls ordering."""
         # TODO: check what is happening with NULL ordering
 
-        return exclusions.closed()
+        return exclusions.open()
 
     @property
     def standalone_binds(self):
@@ -1519,7 +1514,7 @@ class Requirements(SuiteRequirements):
     @property
     def fetch_first(self):
         """backend supports the fetch first clause."""
-        return exclusions.closed()
+        return exclusions.open()
 
     @property
     def fetch_percent(self):
@@ -1534,7 +1529,7 @@ class Requirements(SuiteRequirements):
     @property
     def fetch_no_order_by(self):
         """backend supports the fetch first without order by"""
-        return exclusions.closed()
+        return exclusions.open()
 
     @property
     def fetch_offset_with_options(self):
@@ -1570,4 +1565,8 @@ class Requirements(SuiteRequirements):
 
     @property
     def array_type(self):
+        return exclusions.closed()
+
+    @property
+    def insert_returning(self):
         return exclusions.closed()
