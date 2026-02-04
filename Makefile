@@ -9,13 +9,13 @@ pytest: venv/bin/pytest
 	venv/bin/pytest -r A
 
 
-venv/bin/twine: setup
+venv/bin/twine: venv/
 	venv/bin/pip install twine
 
-sdist: setup
+sdist: venv/
 	venv/bin/python setup.py build sdist
 
-wheel: setup
+wheel: venv/
 	venv/bin/python setup.py build bdist_wheel
 
 upload: venv/bin/twine wheel sdist
