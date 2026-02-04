@@ -3,8 +3,8 @@ requires = ["setuptools >= 40.6.0", "wheel", 'sqlalchemy>=2.0.34']
 build-backend = "setuptools.build_meta"
 
 [project]
+dynamic = [ "version" ]
 name = "sqlalchemy_monetdb"
-version = "2.1.0a0"
 description = "SQLAlchemy dialect for MonetDB"
 readme = "README.rst"
 authors = [
@@ -50,6 +50,9 @@ monetdb = "sqlalchemy_monetdb.dialect:MonetDialect"
 [tool.setuptools]
 packages = [ "sqlalchemy_monetdb", "test" ]
 zip-safe = false
+
+[tool.setuptools.dynamic]
+version = { attr = "sqlalchemy_monetdb.__version__" }
 
 [tool.pytest]
 addopts = ["--tb", "auto", "-r", "fxX", "-p", "no:warnings"]
