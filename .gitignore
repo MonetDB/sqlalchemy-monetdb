@@ -3,6 +3,9 @@
 # C extensions
 *.so
 
+# do not track uv.lock before most of us have started using uv
+/uv.lock
+
 # Packages
 *.egg
 *.egg-info
