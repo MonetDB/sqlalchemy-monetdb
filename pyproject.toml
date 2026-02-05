@@ -53,7 +53,7 @@ monetdb = "sqlalchemy_monetdb.dialect:MonetDialect"
 
 [dependency-groups]
 # 'dev' refers to the optional dependencies listed above.
-dev = [ "sqlalchemy_monetdb[test]" ]
+dev = [ "sqlalchemy_monetdb[test] >=2.0.0" ]
 
 
 [tool.setuptools]

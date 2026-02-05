@@ -1,22 +1,26 @@
-venv/:
-	python3 -m venv venv
-	venv/bin/pip install --upgrade pip wheel setuptools
+# Makefile so you don't have to remember the exact commands
 
-venv/bin/pytest: venv/
-	venv/bin/pip install -e ".[test]"
+# This Makefile uses the 'uv' tool (https://docs.astral.sh/uv/) to manage
+# virtual envs and dependencies.
+#
+# Each uv invocation automatically creates and updates its venv before it does
+# its work. This means we can leave venv management out this Makefile.
+#
+# Uv also makes it easy to test with older versions of the dependencies using
+# the --resolution=lowest-direct flag. We use that in target pytest-old.
+#
+# It can be installed from its website or using 'dnf'.
 
-pytest: venv/bin/pytest
-	venv/bin/pytest -r A
 
+build:
+	uv build
 
-venv/bin/twine: venv/
-	venv/bin/pip install twine
+pytest:
+	uv run pytest
 
-sdist: venv/
-	venv/bin/python setup.py build sdist
+pytest-old:
+	uv run --resolution=lowest-direct pytest
 
-wheel: venv/
-	venv/bin/python setup.py build bdist_wheel
-
-upload: venv/bin/twine wheel sdist
-	venv/bin/twine upload dist/*.whl dist/*.tar.gz
+# untested yet
+upload:
+	uv run twine upload dist/*.whl dist/*.tar.gz
