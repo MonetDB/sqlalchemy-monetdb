@@ -35,6 +35,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# The 'test' dependencies are development dependencies, not end user dependencies.
+# They should really be a dependency group but that has only
+# recently been added to pip so we leave them as optional dependencies.
+# Dependency group 'dev' below automatically includes them.
 test = [
     "pytest>=7.4.0",
     "pytest-cov>=4.1.0",
@@ -46,6 +50,11 @@ test = [
 [project.entry-points."sqlalchemy.dialects"]
 monetdb = "sqlalchemy_monetdb.dialect:MonetDialect"
 "monetdb.pymonetdb" = "sqlalchemy_monetdb.dialect:MonetDialect"
+
+[dependency-groups]
+# 'dev' refers to the optional dependencies listed above.
+dev = [ "sqlalchemy_monetdb[test]" ]
+
 
 [tool.setuptools]
 packages = [ "sqlalchemy_monetdb", "test" ]
