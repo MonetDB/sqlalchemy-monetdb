@@ -31,7 +31,7 @@ urls = { Homepage = "https://github.com/MonetDB/sqlalchemy-monetdb" }
 requires-python = ">=3.8.1"
 dependencies = [
     "pymonetdb>=1.8.2",
-    "sqlalchemy>=2.0.34",
+    "sqlalchemy>=1.4.54",
 ]
 
 [project.optional-dependencies]
