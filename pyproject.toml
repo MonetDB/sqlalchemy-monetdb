@@ -63,6 +63,9 @@ zip-safe = false
 [tool.setuptools.dynamic]
 version = { attr = "sqlalchemy_monetdb.__version__" }
 
+[tool.distutils.egg_info]
+egg_base = "dist"
+
 [tool.pytest]
 addopts = ["--tb", "auto", "-r", "fxX", "-p", "no:warnings"]
 # addopts = "--tb native -v -r fxX --maxfail=25 -p no:warnings"
