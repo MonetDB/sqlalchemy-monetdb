@@ -18,3 +18,58 @@ class LikeFunctionsTest:
     @pytest.mark.skip(reason="Temporarily suppress because monetdb container does not have PCRE")
     def test_regexp_replace(self):
         pass
+class DateHistoricTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class DateTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class DateTimeCoercedToDateTimeTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class DateTimeHistoricTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class DateTimeMicrosecondsTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class DateTimeTZTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class DateTimeTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class TimeMicrosecondsTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class TimeTZTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class TimeTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
+class TimestampMicrosecondsTest:
+    @pytest.mark.skip(reason="Temporal types don't work yet")
+    def test_literal(self):
+        pass
+
