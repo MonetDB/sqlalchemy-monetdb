@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools >= 40.6.0", "wheel", 'sqlalchemy>=2.0.34']
-build-backend = "setuptools.build_meta"
+requires = ["hatchling >= 1.16"]
+build-backend = "hatchling.build"
 
 [project]
 dynamic = [ "version" ]
@@ -55,16 +55,12 @@ monetdb = "sqlalchemy_monetdb.dialect:MonetDialect"
 # 'dev' refers to the optional dependencies listed above.
 dev = [ "sqlalchemy_monetdb[test] >=2.0.0" ]
 
+[tool.hatch.build.targets.sdist]
+#include =
+exclude = [ ".jj" ]
 
-[tool.setuptools]
-packages = [ "sqlalchemy_monetdb", "test" ]
-zip-safe = false
-
-[tool.setuptools.dynamic]
-version = { attr = "sqlalchemy_monetdb.__version__" }
-
-[tool.distutils.egg_info]
-egg_base = "dist"
+[tool.hatch.version]
+path = "sqlalchemy_monetdb/__init__.py"
 
 [tool.pytest]
 addopts = ["--tb", "auto", "-r", "fxX", "-p", "no:warnings"]
