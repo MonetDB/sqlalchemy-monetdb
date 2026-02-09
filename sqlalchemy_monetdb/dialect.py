@@ -81,6 +81,7 @@ class MonetDialect(default.DefaultDialect):
         colspecs.update({
             sqltypes.Date: monetdb_types.DATE,
             sqltypes.DateTime: monetdb_types.DATETIME,
+            sqltypes.Time: monetdb_types.TIME,
         })
 
     def __init__(self, json_serializer=None, json_deserializer=None, **kwargs):

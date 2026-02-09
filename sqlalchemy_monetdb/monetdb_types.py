@@ -9,7 +9,6 @@ import sqlalchemy
 from . import modern_sqlalchemy
 
 from sqlalchemy.sql import sqltypes as sqltypes
-from sqlalchemy.sql.sqltypes import TypeEngine
 from sqlalchemy.types import (
     INTEGER,
     BIGINT,
@@ -80,6 +79,9 @@ class TIME(sqltypes.TIME):
         super().__init__(timezone=timezone)
         self.precision = precision
         print("time self", precision)
+
+    def literal_processor(self, dialect):
+        return pymonetdb.sql.monetize.monet_time
 
 
 class MDB_JSON(sqltypes.JSON):
