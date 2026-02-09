@@ -17,22 +17,30 @@ classifiers = [
     "Topic :: Database :: Front-Ends",
     "Topic :: Database :: Database Engines/Servers",
     "Development Status :: 5 - Production/Stable",
-    "Environment :: Console",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
-    "Programming Language :: Python :: Implementation :: PyPy",
+    # we never test this: "Programming Language :: Python :: Implementation :: PyPy",
 ]
-urls = { Homepage = "https://github.com/MonetDB/sqlalchemy-monetdb" }
 
 requires-python = ">=3.8.1"
 dependencies = [
     "pymonetdb>=1.8.2",
     "sqlalchemy>=2.0.34",
 ]
+
+[project.urls]
+Homepage = "https://github.com/MonetDB/sqlalchemy-monetdb"
+Repository = "https://github.com/MonetDB/sqlalchemy-monetdb"
+Issues = "https://github.com/MonetDB/sqlalchemy-monetdb/issues"
+Changelog = "https://github.com/me/spam/blob/master/CHANGES"
+
 
 [project.optional-dependencies]
 # The 'test' dependencies are development dependencies, not end user dependencies.
