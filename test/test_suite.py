@@ -14,27 +14,7 @@ class JSONTest:
     def test_round_trip_custom_json(self):
         pass
 
-class DateTimeCoercedToDateTimeTest:
-    @pytest.mark.skip(reason="Temporal types don't work yet")
-    def test_literal(self):
-        pass
-
-class DateTimeHistoricTest:
-    @pytest.mark.skip(reason="Temporal types don't work yet")
-    def test_literal(self):
-        pass
-
-class DateTimeMicrosecondsTest:
-    @pytest.mark.skip(reason="Temporal types don't work yet")
-    def test_literal(self):
-        pass
-
 class DateTimeTZTest:
-    @pytest.mark.skip(reason="Temporal types don't work yet")
-    def test_literal(self):
-        pass
-
-class DateTimeTest:
     @pytest.mark.skip(reason="Temporal types don't work yet")
     def test_literal(self):
         pass

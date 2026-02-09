@@ -80,6 +80,7 @@ class MonetDialect(default.DefaultDialect):
     if not modern_sqlalchemy:
         colspecs.update({
             sqltypes.Date: monetdb_types.DATE,
+            sqltypes.DateTime: monetdb_types.DATETIME,
         })
 
     def __init__(self, json_serializer=None, json_deserializer=None, **kwargs):

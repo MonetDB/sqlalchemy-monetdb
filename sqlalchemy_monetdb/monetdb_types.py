@@ -2,7 +2,6 @@ from collections.abc import Sequence
 from typing import Optional
 from typing import TYPE_CHECKING
 from typing import overload
-import datetime as dt
 
 import pymonetdb
 import sqlalchemy
@@ -55,6 +54,13 @@ class DATE(sqltypes.Date):
 
     def literal_processor(self, dialect):
         return pymonetdb.sql.monetize.monet_date
+
+
+class DATETIME(sqltypes.Date):
+    __visit_name__ = "DATETIME"
+
+    def literal_processor(self, dialect):
+        return pymonetdb.sql.monetize.monet_datetime
 
 
 class TIME(sqltypes.TIME):
