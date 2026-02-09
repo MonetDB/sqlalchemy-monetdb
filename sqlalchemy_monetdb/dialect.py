@@ -7,7 +7,7 @@ from collections import defaultdict
 import sqlalchemy
 from sqlalchemy import text
 
-from . import modern_sqlalchemy
+from . import monetdb_types, modern_sqlalchemy
 
 
 # from sqlalchemy import sql, util
@@ -75,8 +75,12 @@ class MonetDialect(default.DefaultDialect):
     default_paramstyle = "named"
 
     colspecs =  {
-                    sqltypes.JSON.JSONPathType: JSONPathType,
-                }
+        sqltypes.JSON.JSONPathType: JSONPathType,
+    }
+    if not modern_sqlalchemy:
+        colspecs.update({
+            sqltypes.Date: monetdb_types.DATE,
+        })
 
     def __init__(self, json_serializer=None, json_deserializer=None, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)

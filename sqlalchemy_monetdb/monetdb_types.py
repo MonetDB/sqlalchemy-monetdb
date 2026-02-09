@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from typing import overload
 import datetime as dt
 
+import pymonetdb
 import sqlalchemy
 
 from . import modern_sqlalchemy
@@ -18,7 +19,6 @@ from sqlalchemy.types import (
     CHAR,
     TEXT,
     FLOAT,
-    DATE,
     BOOLEAN,
     DECIMAL,
     TIMESTAMP,
@@ -48,6 +48,13 @@ class DOUBLE_PRECISION(sqltypes.Float):
 
 class TINYINT(sqltypes.Integer):
     __visit_name__ = "TINYINT"
+
+
+class DATE(sqltypes.Date):
+    __visit_name__ = "DATE"
+
+    def literal_processor(self, dialect):
+        return pymonetdb.sql.monetize.monet_date
 
 
 class TIME(sqltypes.TIME):
