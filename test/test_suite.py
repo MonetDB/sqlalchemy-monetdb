@@ -13,8 +13,3 @@ class JSONTest:
                         "This is unexpected in this test.")
     def test_round_trip_custom_json(self):
         pass
-
-class TimestampMicrosecondsTest:
-    @pytest.mark.skip(reason="Temporal types don't work yet")
-    def test_literal(self):
-        pass
