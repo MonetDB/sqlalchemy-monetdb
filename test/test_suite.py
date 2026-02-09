@@ -13,8 +13,3 @@ class JSONTest:
                         "This is unexpected in this test.")
     def test_round_trip_custom_json(self):
         pass
-
-class LikeFunctionsTest:
-    @pytest.mark.skip(reason="Temporarily suppress because monetdb container does not have PCRE")
-    def test_regexp_replace(self):
-        pass
