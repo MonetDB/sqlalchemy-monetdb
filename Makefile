@@ -16,9 +16,11 @@ build:
 	uv build
 
 pytest:
+	uv sync --resolution=highest
 	uv run pytest
 
 pytest-old:
+	uv sync --resolution=lowest-direct
 	uv run --resolution=lowest-direct pytest
 
 # untested yet
