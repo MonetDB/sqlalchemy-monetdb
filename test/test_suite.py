@@ -14,10 +14,6 @@ class JSONTest:
     def test_round_trip_custom_json(self):
         pass
 
-class LikeFunctionsTest:
-    @pytest.mark.skip(reason="Temporarily suppress because monetdb container does not have PCRE")
-    def test_regexp_replace(self):
-        pass
 class DateHistoricTest:
     @pytest.mark.skip(reason="Temporal types don't work yet")
     def test_literal(self):
@@ -72,4 +68,3 @@ class TimestampMicrosecondsTest:
     @pytest.mark.skip(reason="Temporal types don't work yet")
     def test_literal(self):
         pass
-
