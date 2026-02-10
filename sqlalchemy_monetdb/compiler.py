@@ -4,6 +4,8 @@ from sqlalchemy.sql import compiler, operators, cast
 
 import re
 
+from . import modern_sqlalchemy
+
 FK_ON_DELETE = re.compile(
     r"^(?:RESTRICT|CASCADE|SET NULL|NO ACTION|SET DEFAULT)$", re.I
 )
@@ -175,6 +177,11 @@ class MonetCompiler(compiler.SQLCompiler):
             "?": "C",
         }
     )
+
+    if not modern_sqlalchemy:
+        reg = re.escape("".join(bindname_escape_characters))
+        _bind_translate_re = re.compile(f"[{reg}]")
+        _bind_translate_chars = bindname_escape_characters
 
     def bindparam_string(self, name, **kw):
         if self.preparer._bindparam_requires_quotes(name) and not kw.get(

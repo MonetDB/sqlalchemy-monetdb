@@ -3,6 +3,10 @@ from typing import Optional
 from typing import TYPE_CHECKING
 from typing import overload
 
+import pymonetdb
+import sqlalchemy
+
+from . import modern_sqlalchemy
 
 from sqlalchemy.sql import sqltypes as sqltypes
 from sqlalchemy.types import (
@@ -13,14 +17,14 @@ from sqlalchemy.types import (
     CHAR,
     TEXT,
     FLOAT,
-    DATE,
     BOOLEAN,
     DECIMAL,
     TIMESTAMP,
     BLOB,
     JSON,
-    UUID,
 )
+if modern_sqlalchemy:
+    from sqlalchemy.types import UUID
 from uuid import UUID as _python_UUID
 
 
@@ -44,6 +48,20 @@ class TINYINT(sqltypes.Integer):
     __visit_name__ = "TINYINT"
 
 
+class DATE(sqltypes.Date):
+    __visit_name__ = "DATE"
+
+    def literal_processor(self, dialect):
+        return pymonetdb.sql.monetize.monet_date
+
+
+class DATETIME(sqltypes.Date):
+    __visit_name__ = "DATETIME"
+
+    def literal_processor(self, dialect):
+        return pymonetdb.sql.monetize.monet_datetime
+
+
 class TIME(sqltypes.TIME):
     """MonetDB TIME type."""
 
@@ -61,6 +79,9 @@ class TIME(sqltypes.TIME):
         super().__init__(timezone=timezone)
         self.precision = precision
         print("time self", precision)
+
+    def literal_processor(self, dialect):
+        return pymonetdb.sql.monetize.monet_time
 
 
 class MDB_JSON(sqltypes.JSON):
@@ -101,25 +122,25 @@ class JSONPATH(JSONPathType):
     __visit_name__ = "JSONPATH"
 
 
-class MDB_UUID(sqltypes.UUID[sqltypes._UUID_RETURN]):
-    render_bind_cast = True
-    render_literal_cast = True
+if modern_sqlalchemy:
+    class MDB_UUID(sqltypes.UUID[sqltypes._UUID_RETURN]):
+        render_bind_cast = True
+        render_literal_cast = True
 
-    if TYPE_CHECKING:
+        if TYPE_CHECKING:
 
-        @overload
-        def __init__(
-            self: MDB_UUID[_python_UUID], as_uuid: Literal[True] = ...
-        ) -> None:
-            ...
+            @overload
+            def __init__(
+                self: MDB_UUID[_python_UUID], as_uuid: Literal[True] = ...
+            ) -> None:
+                ...
 
-        @overload
-        def __init__(self: MDB_UUID[str], as_uuid: Literal[False] = ...) -> None:
-            ...
+            @overload
+            def __init__(self: MDB_UUID[str], as_uuid: Literal[False] = ...) -> None:
+                ...
 
-        def __init__(self, as_uuid: bool = True) -> None:
-            ...
-
+            def __init__(self, as_uuid: bool = True) -> None:
+                ...
 
 MONETDB_TYPE_MAP = {
     "tinyint": TINYINT,
@@ -142,6 +163,6 @@ MONETDB_TYPE_MAP = {
     "timestamp": TIMESTAMP,
     "timestamptz": TIMESTAMP,
     "varchar": VARCHAR,
-    "uuid": MDB_UUID,
+    "uuid": MDB_UUID if modern_sqlalchemy else None,
     "json": MDB_JSON,
 }
